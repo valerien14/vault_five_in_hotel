@@ -42,7 +42,6 @@ sealed interface DeviceState {
 
 	sealed interface Ready : DeviceState {
 		val deviceModels: Map<Long, Plain>
-
 		data class Browsing(override val deviceModels: Map<Long, Plain>) : Ready
 		data class Selecting(override val deviceModels: Map<Long, Plain>) : Ready
 	}
@@ -168,36 +167,6 @@ class MainViewModel @Inject constructor(
 					}?.let { state -> withContext(Dispatchers.Main) { _deviceState.update { state } } }
 				}
 			}
-		}
-	}
-
-	fun dispatch(action: Action) {
-		viewModelScope.launch(Dispatchers.IO) {
-			val result = when (val s = this@MainViewModel._state.value) {
-				MainState.Error.DataUnavailable.NoPermission -> s
-				MainState.Loading -> s
-				is MainState.Ready.Browsing -> {
-					when (action) {
-						Action.TileLongClick -> MainState.Ready.Selecting(emptyList(), s.deviceModels, s.vaultModels)
-						is Action.TileClick.Device -> {
-							val cached = this.async { s.copy(deviceModels = buildDeviceModels(action.path)) }
-							withContext(Dispatchers.Main) { _state.update { MainState.Loading } }
-							cached.await()
-						}
-
-						is Action.TileClick.Vault -> s.copy(vaultModels = buildVaultModels(action.id))
-					}
-				}
-
-				is MainState.Ready.Selecting -> {
-					when (action) {
-						Action.TileLongClick -> MainState.Ready.Browsing(s.deviceModels, s.vaultModels)
-						is Action.TileClick.Device -> TODO()
-						is Action.TileClick.Vault -> TODO()
-					}
-				}
-			}
-			withContext(Dispatchers.Main) { _state.update { result } }
 		}
 	}
 
