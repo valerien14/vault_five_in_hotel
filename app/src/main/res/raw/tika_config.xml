@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+    <parsers>
+        <parser class="org.apache.tika.parser.DefaultParser">
+            <mime-exclude>image/jpeg</mime-exclude>
+            <mime-exclude>application/x-sqlite3</mime-exclude>
+            <parser-exclude class="org.apache.tika.parser.jdbc.SQLite3Parser"/>
+        </parser>
+    </parsers>
+</properties>
+<!--<properties>-->
+<!--    <parsers>-->
+<!--        <parser class="org.apache.tika.parser.DefaultParser">-->
+<!--            <mime>audio/*</mime>-->
+<!--            <mime>image/*</mime>-->
+<!--            <mime>video/*</mime>-->
+<!--        </parser>-->
+<!--        <parser class="org.apache.tika.parser.EmptyParser">-->
+<!--            <mime>*</mime>-->
+<!--        </parser>-->
+<!--    </parsers>-->
+<!--    <detectors>-->
+<!--        <detector class="org.apache.tika.mime.MimeTypes"/>-->
+<!--    </detectors>-->
+<!--</properties>-->

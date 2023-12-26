@@ -14,6 +14,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object Singletons {
+
 	@Provides
 	@Singleton
 	fun provideDeviceUtil(app: Application): DeviceUtil {

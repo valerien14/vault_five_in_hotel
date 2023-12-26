@@ -25,8 +25,4 @@ sealed interface Plain {
 		override val path: String,
 		override val id: Long,
 	) : Plain
-
-	companion object {
-		data class TileHeader(val id: Long, val isDirectory: Boolean)
-	}
 }

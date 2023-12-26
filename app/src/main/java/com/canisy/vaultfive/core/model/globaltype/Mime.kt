@@ -20,4 +20,8 @@ sealed interface Mime {
 			const val base: String = "video/"
 		}
 	}
+
+	data class Dir(override val complete: String = "NULL"): Mime
+
+	data class Other(override val complete: String = "NULL") : Mime
 }
