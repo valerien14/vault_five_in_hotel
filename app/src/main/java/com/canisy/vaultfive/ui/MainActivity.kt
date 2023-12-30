@@ -10,7 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.canisy.vaultfive.ui.route.main.NewComposer
+import com.canisy.vaultfive.ui.route.main.MainComposer
+import com.canisy.vaultfive.ui.route.main.TestComposer
 import com.canisy.vaultfive.ui.theme.VaultFiveTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -25,7 +26,7 @@ class MainActivity : ComponentActivity() {
 			VaultFiveTheme {
 				Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
 					NavHost(navController = this.navHostController, startDestination = "main") {
-						composable(route = "main") { NewComposer() }
+						composable(route = "main") { MainComposer() }
 					}
 				}
 			}

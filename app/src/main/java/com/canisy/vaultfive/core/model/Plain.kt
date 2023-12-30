@@ -9,7 +9,7 @@ sealed interface Plain {
 	val name: String
 	val path: String
 
-	data class Directory(
+	data class Dir(
 		val childCount: Int,
 		override val date: String,
 		override val name: String,

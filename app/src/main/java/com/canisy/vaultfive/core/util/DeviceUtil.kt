@@ -119,21 +119,22 @@ class DeviceUtil @Inject constructor(private val ctr: ContentResolver) {
 //	}
 
 	suspend fun traverse(path: String) = withContext(Dispatchers.IO) {
-		val startTimer = System.currentTimeMillis()
 		val partition = Files.list(Paths.get(path)).use { s -> s.collect(Collectors.partitioningBy { it.isDirectory() }) }
 		val dirs = this.async {
 			run { partition[true]?.toList() ?: emptyList() }.map {
 				async(Dispatchers.IO) {
-					Plain.Directory(
+					Plain.Dir(
 						date = formatTimestamp(it.getLastModifiedTime().toMillis(), false),
 						name = it.name,
 						path = it.pathString,
 						id = UUID.randomUUID().mostSignificantBits,
-						childCount = Files.list(it).filter { file ->
-							Files.probeContentType(file)?.let { mime ->
-								mime.startsWith(Mime.Audio.base) || mime.startsWith(Mime.Image.base) || mime.startsWith(Mime.Video.base)
-							} ?: false
-						}.count().toInt()
+						childCount = Files.list(it).use {
+							it.filter { file ->
+								Files.probeContentType(file)?.let { mime ->
+									mime.startsWith(Mime.Audio.base) || mime.startsWith(Mime.Image.base) || mime.startsWith(Mime.Video.base)
+								} ?: false
+							}.count().toInt()
+						}
 					)
 				}
 			}.awaitAll()
@@ -160,7 +161,7 @@ class DeviceUtil @Inject constructor(private val ctr: ContentResolver) {
 				}
 			}.awaitAll().requireNoNulls()
 		}
-		awaitAll(dirs, medias).flatten()
+		Pair(dirs.await(), medias.await())
 	}
 
 	private suspend fun traverseTwo(path: String) = withContext(Dispatchers.IO) {
@@ -172,7 +173,7 @@ class DeviceUtil @Inject constructor(private val ctr: ContentResolver) {
 		val dirs = this.async {
 			directories.map {
 				async {
-					Plain.Directory(
+					Plain.Dir(
 						childCount = 0,
 						date = formatTimestamp(it.getLastModifiedTime().toMillis(), false),
 						name = it.name,
@@ -318,7 +319,7 @@ class DeviceUtil @Inject constructor(private val ctr: ContentResolver) {
 			stream.filter { Files.isDirectory(it) }.collect(Collectors.toList())
 		}.map {
 			this.async {
-				Plain.Directory(
+				Plain.Dir(
 					childCount = countMedia(it.pathString),
 					date = formatTimestamp(it.getLastModifiedTime().toMillis(), true),
 					name = it.fileName.toString(),
